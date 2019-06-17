@@ -2,13 +2,14 @@
 
 # Set the defaults. These can be overridden by specifying the value as an
 # environment variable when running this script.
-INCLUDE_OPENSSH="${INCLUDE_OPENSSH:-true}"
+INCLUDE_OPENSSH= ${INCLUDE_OPENSSH:-true}
 INCLUDE_SAKURA="${INCLUDE_SAKURA:-false}"
 INCLUDE_PROTONFIX="${INCLUDE_PROTONFIX:-false}"
 INCLUDE_GPU_DRIVERS="${INCLUDE_GPU_DRIVERS:-true}"
 GPU_TYPE="${GPU_TYPE:-auto}"
 NON_INTERACTIVE="${NON_INTERACTIVE:-false}"
-STEAM_USER="${STEAM_USER:-steam}"
+STEAM_USER="${1:-steam}"
+STEAMOS_BUILD_DIR="${STEAMOS_BUILD_DIR:-/tmp}"
 export STEAM_USER
 
 # Configure the default versions of the SteamOS packages to use. These generally
@@ -49,16 +50,16 @@ fi
 # Download the packages we need. If we fail at downloading, stop the script.
 set -e
 echo "Downloading SteamOS packages..."
-wget "http://repo.steampowered.com/steam/pool/steam/s/steam/steam_${STEAMOS_STEAM_VER}.tar.xz"
-wget "http://repo.steamstatic.com/steamos/pool/main/s/steamos-compositor/steamos-compositor_${STEAMOS_COMPOSITOR_VER}.tar.xz"
-wget "http://repo.steamstatic.com/steamos/pool/main/s/steamos-modeswitch-inhibitor/steamos-modeswitch-inhibitor_${STEAMOS_MODESWITCH_VER}.tar.xz"
-wget "http://repo.steamstatic.com/steamos/pool/main/s/steamos-base-files/steamos-base-files_${STEAMOS_ALIENWAREWMI_VER}.tar.xz"
+wget -P ${STEAMOS_BUILD_DIR} "http://repo.steampowered.com/steam/pool/steam/s/steam/steam_${STEAMOS_STEAM_VER}.tar.gz"
+wget -P ${STEAMOS_BUILD_DIR} "http://repo.steamstatic.com/steamos/pool/main/s/steamos-compositor/steamos-compositor_${STEAMOS_COMPOSITOR_VER}.tar.xz"
+wget -P ${STEAMOS_BUILD_DIR} "http://repo.steamstatic.com/steamos/pool/main/s/steamos-modeswitch-inhibitor/steamos-modeswitch-inhibitor_${STEAMOS_MODESWITCH_VER}.tar.xz"
+wget -P ${STEAMOS_BUILD_DIR} "http://repo.steamstatic.com/steamos/pool/main/s/steamos-base-files/steamos-base-files_${STEAMOS_ALIENWAREWMI_VER}.tar.xz"
 set +e
 
 # See if there is a 'steam' user account. If not, create it.
 if ! grep "^${STEAM_USER}" /etc/passwd > /dev/null; then
 	echo "Steam user '${STEAM_USER}' not found. Creating it..."
-	adduser --disabled-password --gecos "" "${STEAM_USER}"
+	useradd --disabled-password --gecos "" "${STEAM_USER}"
 fi
 STEAM_UID=$(grep "^${STEAM_USER}" /etc/passwd | cut -d':' -f3)
 STEAM_GID=$(grep "^${STEAM_USER}" /etc/passwd | cut -d':' -f4)
@@ -85,7 +86,7 @@ if [[ "${INCLUDE_GPU_DRIVERS}" == "true" ]]; then
 			echo "  Unable to determine GPU. Skipping driver install."
 		fi
 	fi
-	
+
 	# Install the GPU drivers.
 	case "${GPU_TYPE}" in
 		nvidia)
@@ -109,20 +110,19 @@ fi
 
 # Install steam and steam device support.
 echo "Installing steam..."
-swupd bundle-add games
-tar -C /tmp xvf steam-~${STEAMOS_STEAM_VER}.tar.xz
-/tmp/steam-~${STEAMOS_STEAM_VER}/configure
-/tmp/steam-~${STEAMOS_STEAM_VER}/make
-/tmp/steam-~${STEAMOS_STEAM_VER}/make install
-rm steam-~${STEAMOS_STEAM_VER}.tar.xz
+tar xvf ${STEAMOS_BUILD_DIR}/steam_${STEAMOS_STEAM_VER}.tar.gz --strip-components=0 -C ${STEAMOS_BUILD_DIR}
+pushd ${STEAMOS_BUILD_DIR}/steam/
+make install
+popd
+rm ${STEAMOS_BUILD_DIR}/steam_${STEAMOS_STEAM_VER}.tar.gz
+rm -rf ${STEAMOS_BUILD_DIR}/steam
 
-
-# Enable Protonfix for ease of use with certain games that needs tweaking.
+# Enable Protonfix for ease of use w_${STEAMOS_STEAM_VER}ith certain games that needs tweaking.
 # https://github.com/simons-public/protonfixes
 # Installing Protonfix for ease of use
 if [[ "${INCLUDE_PROTONFIX}" == "true" ]]; then
 	swupd bundle-add python3-basic
-	echo "Installing protonfix..."    
+	echo "Installing protonfix..."
 	pip3 install protonfixes --upgrade
 	# Installing cefpython3 for visual progress bar
 	pip install cefpython3
@@ -163,21 +163,28 @@ chmod 440 /etc/sudoers.d/steamos-reboot
 
 # Install the steamos compositor, modeswitch, and themes
 echo "Installing Compositor and Modeswitch"
-tar -C /tmp xvf steam-~${STEAMOS_COMPOSITOR_VER}.tar.xz
-/tmp/steam-~${STEAMOS_COMPOSITOR_VER}/configure
-/tmp/steam-~${STEAMOS_COMPOSITOR_VER}/make
-/tmp/steam-~${STEAMOS_COMPOSITOR_VER}/make install
-rm steam-~${STEAMOS_COMPOSITOR_VER}.tar.xz
+tar xvf ${STEAMOS_BUILD_DIR}/steamos-compositor_${STEAMOS_COMPOSITOR_VER}.tar.xz --strip-components=0 -C ${STEAMOS_BUILD_DIR}
+pushd ${STEAMOS_BUILD_DIR}/steamos-compositor-${STEAMOS_COMPOSITOR_VER}
+./configure
+make
+make install
+popd
+rm ${STEAMOS_BUILD_DIR}/steamos-compositor_${STEAMOS_COMPOSITOR_VER}.tar.xz
+#rm -rf ${STEAMOS_BUILD_DIR}/steamos-compositor-${STEAMOS_COMPOSITOR_VER}
 
-tar -C /tmp xvf steam-~${STEAMOS_MODESWITCH_VER}.tar.xz
-/tmp/steam-~${STEAMOS_MODESWITCH_VER}/configure
-/tmp/steam-~${STEAMOS_MODESWITCH_VER}/make
-/tmp/steam-~${STEAMOS_MODESWITCH_VER}/make install
-rm steam-~${STEAMOS_MODESWITCH_VER}.tar.xz
+tar xvf ${STEAMOS_BUILD_DIR}/steamos-modeswitch-inhibitor_${STEAMOS_MODESWITCH_VER}.tar.xz --strip-components=0 -C ${STEAMOS_BUILD_DIR}
+pushd ${STEAMOS_BUILD_DIR}/steamos-modeswitch-inhibitor-${STEAMOS_MODESWITCH_VER}
+./configure
+make
+make install
+popd
+rm ${STEAMOS_BUILD_DIR}/steamos-modeswitch-inhibitor_${STEAMOS_MODESWITCH_VER}.tar.xz
+#rm -rf ${STEAMOS_BUILD_DIR}/steamos-modeswitch-inhibitor-${STEAMOS_MODESWITCH_VER}
 
 
 # Install Alienware WMI Control
-tar xvf steamos-base-files_${STEAMOS_ALIENWAREWMI_VER}.tar.xz --strip-components=3 -C /usr/bin/ steamos-base-files-2.58/usr/bin/alienware_wmi_control.sh
+tar xvf ${STEAMOS_BUILD_DIR}/steamos-base-files_${STEAMOS_ALIENWAREWMI_VER}.tar.xz --strip-components=3 -C /usr/bin/ steamos-base-files-2.58/usr/bin/alienware_wmi_control.sh
+rm ${STEAMOS_BUILD_DIR}/steamos-base-files_${STEAMOS_ALIENWAREWMI_VER}.tar.xz
 chmod +x /usr/bin/alienware_wmi_control.sh
 
 # Set the X session to use the installed steamos session
@@ -186,10 +193,10 @@ cp ./conf/steam-session.conf "/var/lib/AccountsService/users/${STEAM_USER}"
 
 # WIP - find a way to enable Steamplay without using Desktop Steam Client. Also maybe find a way to enable Steam Beta with latest Steamplay
 # Enable SteamPlay
-echo "Enable Steamplay..."
-echo "Starting Steam to create initial configurations."
-echo "Close steam to continue."
-sudo STEAM_USER=${STEAM_USER} ./run_steam.sh
+#echo "Enable Steamplay..."
+#echo "Starting Steam to create initial configurations."
+#echo "Close steam to continue."
+#./run_steam.sh
 
 echo ""
 echo "Installation complete! Press ENTER to reboot or CTRL+C to exit"
