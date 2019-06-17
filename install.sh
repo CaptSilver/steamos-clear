@@ -143,6 +143,7 @@ fi
 
 # Enable automatic login. We use 'envsubst' to replace the user with ${STEAM_USER}.
 echo "Enabling automatic login..."
+mkdir -p /etc/gdm3/
 envsubst < ./conf/custom.conf > /etc/gdm3/custom.conf
 
 # Create our session switching scripts to allow rebooting to the desktop
