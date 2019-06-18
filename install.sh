@@ -159,7 +159,8 @@ chmod +x /usr/local/sbin/steamos-fg
 
 # Create a sudoers rule to allow passwordless reboots between sessions.
 echo "Creating sudoers rules to allow rebooting between sessions..."
-cp ./conf/reboot-sudoers.conf /etc/sudoers.d/steamos-reboot
+mkdir -p /etc/sudoers.d
+cp ./conf/reboot-sudoers.conf /etc/sudoers.d/steamos.conf
 chmod 440 /etc/sudoers.d/steamos-reboot
 
 # Install the steamos compositor, modeswitch, and themes
@@ -171,7 +172,7 @@ make
 make install
 popd
 rm ${STEAMOS_BUILD_DIR}/steamos-compositor_${STEAMOS_COMPOSITOR_VER}.tar.xz
-#rm -rf ${STEAMOS_BUILD_DIR}/steamos-compositor-${STEAMOS_COMPOSITOR_VER}
+rm -rf ${STEAMOS_BUILD_DIR}/steamos-compositor-${STEAMOS_COMPOSITOR_VER}
 
 tar xvf ${STEAMOS_BUILD_DIR}/steamos-modeswitch-inhibitor_${STEAMOS_MODESWITCH_VER}.tar.xz --strip-components=0 -C ${STEAMOS_BUILD_DIR}
 pushd ${STEAMOS_BUILD_DIR}/steamos-modeswitch-inhibitor-${STEAMOS_MODESWITCH_VER}
@@ -180,7 +181,7 @@ make
 make install
 popd
 rm ${STEAMOS_BUILD_DIR}/steamos-modeswitch-inhibitor_${STEAMOS_MODESWITCH_VER}.tar.xz
-#rm -rf ${STEAMOS_BUILD_DIR}/steamos-modeswitch-inhibitor-${STEAMOS_MODESWITCH_VER}
+rm -rf ${STEAMOS_BUILD_DIR}/steamos-modeswitch-inhibitor-${STEAMOS_MODESWITCH_VER}
 
 
 # Install Alienware WMI Control
@@ -190,7 +191,11 @@ chmod +x /usr/bin/alienware_wmi_control.sh
 
 # Set the X session to use the installed steamos session
 echo "Configuring the default session..."
-cp ./conf/steam-session.conf "/var/lib/AccountsService/users/${STEAM_USER}"
+mkdir -p "/usr/local/share/xsessions"
+cp ./conf/steam-session.conf "/usr/local/share/xsessions/${STEAM_USER}"
+mkdir -p "/usr/local/share/applications/"
+cp ./conf/steamos.desktop "/usr/local/share/applications/steamos.desktop"
+cp ./conf/steamos-update "/usr/bin/steamos-update"
 
 # WIP - find a way to enable Steamplay without using Desktop Steam Client. Also maybe find a way to enable Steam Beta with latest Steamplay
 # Enable SteamPlay
