@@ -143,8 +143,8 @@ fi
 
 # Enable automatic login. We use 'envsubst' to replace the user with ${STEAM_USER}.
 echo "Enabling automatic login..."
-mkdir -p /etc/gdm3/
-envsubst < ./conf/custom.conf > /etc/gdm3/custom.conf
+mkdir -p /etc/gdm/
+envsubst < ./conf/custom.conf > /etc/gdm/custom.conf
 
 # Create our session switching scripts to allow rebooting to the desktop
 echo "Creating reboot to session scripts..."
@@ -170,6 +170,9 @@ pushd ${STEAMOS_BUILD_DIR}/steamos-compositor-${STEAMOS_COMPOSITOR_VER}
 ./configure
 make
 make install
+cp ./usr/bin/steamos-sessions /usr/bin/
+chmod +x /usr/bin/steamos-sessions
+mv ./usr/bin/steamos /usr/bin/
 popd
 rm ${STEAMOS_BUILD_DIR}/steamos-compositor_${STEAMOS_COMPOSITOR_VER}.tar.xz
 rm -rf ${STEAMOS_BUILD_DIR}/steamos-compositor-${STEAMOS_COMPOSITOR_VER}
@@ -192,10 +195,9 @@ chmod +x /usr/bin/alienware_wmi_control.sh
 # Set the X session to use the installed steamos session
 echo "Configuring the default session..."
 mkdir -p "/usr/local/share/xsessions"
-cp ./conf/steam-session.conf "/usr/local/share/xsessions/${STEAM_USER}"
-mkdir -p "/usr/local/share/applications/"
-cp ./conf/steamos.desktop "/usr/local/share/applications/steamos.desktop"
+cp ./conf/steamos.desktop "/usr/local/share/xsessions/steamos.desktop"
 cp ./conf/steamos-update "/usr/bin/steamos-update"
+chmod +x /usr/bin/steamos-update
 
 # WIP - find a way to enable Steamplay without using Desktop Steam Client. Also maybe find a way to enable Steam Beta with latest Steamplay
 # Enable SteamPlay
