@@ -203,13 +203,6 @@ cp ./conf/steamos-update "/usr/bin/steamos-update"
 chmod +x /usr/bin/steamos-update
 touch /etc/lsb-release
 
-# WIP - find a way to enable Steamplay without using Desktop Steam Client. Also maybe find a way to enable Steam Beta with latest Steamplay
-# Enable SteamPlay
-#echo "Enable Steamplay..."
-#echo "Starting Steam to create initial configurations."
-#echo "Close steam to continue."
-#./run_steam.sh
-
 echo ""
 echo "Installation complete! Press ENTER to reboot or CTRL+C to exit"
 read -r
