@@ -47,6 +47,10 @@ if [[ "${NON_INTERACTIVE}" != "true" ]]; then
 	fi
 fi
 
+#Need to install Pre-Requirements for compilation and downloading.
+echo "Installing Requirements for installation"
+swupd bundle-add wget devpkg-libX11 devpkg-SDL_image devpkg-systemd python3-basic
+
 # Download the packages we need. If we fail at downloading, stop the script.
 set -e
 echo "Downloading SteamOS packages..."
@@ -121,7 +125,6 @@ rm -rf ${STEAMOS_BUILD_DIR}/steam
 # https://github.com/simons-public/protonfixes
 # Installing Protonfix for ease of use
 if [[ "${INCLUDE_PROTONFIX}" == "true" ]]; then
-	swupd bundle-add python3-basic
 	echo "Installing protonfix..."
 	pip3 install protonfixes --upgrade
 	# Installing cefpython3 for visual progress bar
