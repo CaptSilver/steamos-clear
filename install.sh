@@ -198,6 +198,7 @@ mkdir -p "/usr/local/share/xsessions"
 cp ./conf/steamos.desktop "/usr/local/share/xsessions/steamos.desktop"
 cp ./conf/steamos-update "/usr/bin/steamos-update"
 chmod +x /usr/bin/steamos-update
+touch /etc/lsb-release
 
 # WIP - find a way to enable Steamplay without using Desktop Steam Client. Also maybe find a way to enable Steam Beta with latest Steamplay
 # Enable SteamPlay
