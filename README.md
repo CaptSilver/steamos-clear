@@ -1,7 +1,5 @@
 # SteamOS Clear Linux
 
-![SteamOS Clear Linux]
-
 SteamOS-Clear is a set of scripts to create a SteamOS application on your Clear Linux.
 
 It will do the following:
