@@ -49,7 +49,7 @@ fi
 
 #Need to install Pre-Requirements for compilation and downloading.
 echo "Installing Requirements for installation"
-swupd bundle-add wget devpkg-libX11 devpkg-SDL_image devpkg-systemd python3-basic
+swupd bundle-add wget devpkg-libX11 devpkg-SDL_image devpkg-systemd python3-basic desktop-dev
 
 # Download the packages we need. If we fail at downloading, stop the script.
 set -e
