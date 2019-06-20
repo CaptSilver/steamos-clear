@@ -1,13 +1,26 @@
 #!/bin/bash
+STEAMOS_BUILD_DIR="${1:-/tmp}"
+NVIDIA_KERNEL_TYPE="${NVIDIA_KERNEL_TYPE:-LTS}"
 
-#Check for root
+# Ensure the script is being run as root
+if [ "$EUID" -ne 0 ]; then
+	echo "This script must be run with sudo."
+	exit
+fi
+
 
 #If/else for LTS and Native should be implented here
 
 echo "This script is in Alpha staging!"
 echo "Installing pre-requirements (DKMS)"
-swupd install kernel-native-dkms
-clr-boot-manager update
+echo "The LTS Kernel is recommended for NVIDIA!"
+
+if [[ "${NVIDIA_KERNEL_TYPE} == "NATIVE" ]]; then
+	swupd install kernel-native-dkms
+	clr-boot-manager update
+	else
+		swupd install kernel-lts-dkms
+fi
 
 #Disabling nouveau drivers
 echo "Disabling Nouveau drivers. If script does not complete, please delete /etc/modprobe.d/disable-nouveau.conf"
@@ -25,13 +38,13 @@ printf "/opt/nvidia/lib \n/opt/nvidia/lib32 \n" | sudo tee --append /etc/ld.so.c
 #Implement check for latest by checking:
 #https://download.nvidia.com/XFree86/Linux-x86_64/latest.txt
 echo "Downloading the Latest drivers from Nvidia"
-wget -P /tmp "https://download.nvidia.com/XFree86/Linux-x86_64/430.26/NVIDIA-Linux-x86_64-430.26.run"
-chmod +x /tmp/NVIDIA-Linux-x86_64-430.26.run
+wget -P ${STEAMOS_BUILD_DIR} "https://download.nvidia.com/XFree86/Linux-x86_64/430.26/NVIDIA-Linux-x86_64-430.26.run"
+chmod +x ${STEAMOS_BUILD_DIR}/NVIDIA-Linux-x86_64-430.26.run
 
 echo "Installing Nvidia drivers"
 
 set -e
-/tmp/NVIDIA-Linux-x86_64-430.26.run \
+${STEAMOS_BUILD_DIR}/NVIDIA-Linux-x86_64-430.26.run \
 --utility-prefix=/opt/nvidia \
 --opengl-prefix=/opt/nvidia \
 --compat32-prefix=/opt/nvidia \
@@ -47,6 +60,8 @@ set -e
 set +e
 
 #Implement clean process here
+
+rm -rf ${STEAMOS_BUILD_DIR}/NVIDIA*
 
 #Recommending a repair due to official wiki
 echo "Nvidia drivers installed! Please run: 'swupd repair --quick --bundles=lib-opengl' to repair your installation"
