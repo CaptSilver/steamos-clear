@@ -14,5 +14,9 @@ pushd /tmp/ffmpeg-4.1.3
 ./configure --prefix=/usr/local --enable-shared && make && sudo make install
 popd
 
+#Added this because the is a problem with linking
+sh -c 'echo /usr/local/lib >>/etc/ld.so.conf'
+ldconfig
+
 echo "Cleaning UP!"
 rm -rf /tmp/ffmpeg*
