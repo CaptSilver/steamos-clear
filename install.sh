@@ -36,7 +36,7 @@ if [[ "${NON_INTERACTIVE}" != "true" ]]; then
 	echo "    GPU Type:   ${GPU_TYPE}"
 	echo "  Steam User:   ${STEAM_USER}"
 	echo ""
-	echo "This script will configure a SteamOS-like experience on Ubuntu."
+	echo "This script will configure a SteamOS-like experience on Clear Linux."
 	read -p "Do you want to continue? [Yy] " -n 1 -r
 	echo
 	if [[ $REPLY =~ ^[Yy]$ ]]; then
