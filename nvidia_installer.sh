@@ -1,6 +1,6 @@
 #!/bin/bash
 STEAMOS_BUILD_DIR="${1:-/tmp}"
-NVIDIA_KERNEL_TYPE="${NVIDIA_KERNEL_TYPE:-LTS}"
+NVIDIA_KERNEL_TYPE="${NVIDIA_KERNEL_TYPE:-NATIVE}"
 
 # Ensure the script is being run as root
 if [ "$EUID" -ne 0 ]; then
@@ -15,11 +15,11 @@ echo "This script is in Alpha staging!"
 echo "Installing pre-requirements (DKMS)"
 echo "The LTS Kernel is recommended for NVIDIA!"
 
-if [[ "${NVIDIA_KERNEL_TYPE} == "NATIVE" ]]; then
-	swupd install kernel-native-dkms
+if [[ "${NVIDIA_KERNEL_TYPE}" == "NATIVE" ]]; then
+	swupd bundle-add kernel-native-dkms
 	clr-boot-manager update
-	else
-		swupd install kernel-lts-dkms
+else
+	swupd bundle-add kernel-lts-dkms
 fi
 
 #Disabling nouveau drivers
