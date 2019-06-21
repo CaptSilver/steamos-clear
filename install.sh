@@ -2,8 +2,8 @@
 
 # Set the defaults. These can be overridden by specifying the value as an
 # environment variable when running this script.
-INCLUDE_OPENSSH= ${INCLUDE_OPENSSH:-true}
-INCLUDE_SAKURA="${INCLUDE_SAKURA:-false}"
+INCLUDE_OPENSSH=" ${INCLUDE_OPENSSH:-true}"
+INCLUDE_SAKURA="${INCLUDE_SAKURA:-true}"
 INCLUDE_PROTONFIX="${INCLUDE_PROTONFIX:-false}"
 INCLUDE_GPU_DRIVERS="${INCLUDE_GPU_DRIVERS:-true}"
 GPU_TYPE="${GPU_TYPE:-auto}"
@@ -95,7 +95,7 @@ if [[ "${INCLUDE_GPU_DRIVERS}" == "true" ]]; then
 	case "${GPU_TYPE}" in
 		nvidia)
 			echo "Installing the latest Nvidia drivers..."
-			echo "NVIDIA driver installation is still disabled for now!"
+			./nvidia_installer.sh
 			;;
 		amd)
 			echo "The latest AMD drivers are installed!"
@@ -135,7 +135,7 @@ fi
 # Install a terminal emulator that can be added from Big Picture Mode.
 if [[ "${INCLUDE_SAKURA}" == "true" ]]; then
 	echo "Sakura is unable to be installed at this time."
-	#apt install sakura -y
+	./sakura_installer.sh
 fi
 
 # Install openssh-server for remote administration
@@ -151,14 +151,14 @@ envsubst < ./conf/custom.conf > /etc/gdm/custom.conf
 
 # Create our session switching scripts to allow rebooting to the desktop
 echo "Creating reboot to session scripts..."
-envsubst < ./conf/reboot-to-desktop-mode.sh > /usr/local/sbin/reboot-to-desktop-mode
-envsubst < ./conf/reboot-to-steamos-mode.sh > /usr/local/sbin/reboot-to-steamos-mode
-chmod +x /usr/local/sbin/reboot-to-desktop-mode
-chmod +x /usr/local/sbin/reboot-to-steamos-mode
+envsubst < ./conf/reboot-to-desktop-mode.sh > /usr/local/bin/reboot-to-desktop-mode
+envsubst < ./conf/reboot-to-steamos-mode.sh > /usr/local/bin/reboot-to-steamos-mode
+chmod +x /usr/local/bin/reboot-to-desktop-mode
+chmod +x /usr/local/bin/reboot-to-steamos-mode
 
 # Create the "steamos-fg" script as a workaround for games like Deadcells with the Steam compositor.
-cp ./conf/steamos-fg.sh /usr/local/sbin/steamos-fg
-chmod +x /usr/local/sbin/steamos-fg
+cp ./conf/steamos-fg.sh /usr/local/bin/steamos-fg
+chmod +x /usr/local/bin/steamos-fg
 
 # Create a sudoers rule to allow passwordless reboots between sessions.
 echo "Creating sudoers rules to allow rebooting between sessions..."
@@ -173,8 +173,8 @@ pushd ${STEAMOS_BUILD_DIR}/steamos-compositor-${STEAMOS_COMPOSITOR_VER}
 ./configure
 make
 make install
-cp ./usr/bin/steamos-sessions /usr/bin/
-chmod +x /usr/bin/steamos-sessions
+mv ./usr/bin/steamos-session /usr/bin/
+chmod +x /usr/bin/steamos-session
 mv ./usr/bin/steamos /usr/bin/
 popd
 rm ${STEAMOS_BUILD_DIR}/steamos-compositor_${STEAMOS_COMPOSITOR_VER}.tar.xz
