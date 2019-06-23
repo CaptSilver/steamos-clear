@@ -34,7 +34,7 @@ Here is the list of all the available installation options:
 | -------------------- | ------- | -------------------------------------------------------- |
 | `INCLUDE_OPENSSH`    | true    | Whether or not OpenSSH server should be installed        |
 | `INCLUDE_SAKURA`     | true    | Whether or not to install a terminal emulator            |
-| `INCLUDE_FFMPEG      | true    | Whether or not to install ffmpeg                         |
+| `INCLUDE_FFMPEG`     | true    | Whether or not to install ffmpeg                         |
 | `INCLUDE_PROTONFIX`  | true    | Whether or not to install Protonfix                      |
 | `INCLUDE_GPU_DRIVERS`| true    | Whether or not to install the latest GPU drivers         |
 | `GPU_TYPE`           | auto    | GPU drivers to install. Can be: auto, nvidia, amd, intel |
