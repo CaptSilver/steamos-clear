@@ -2,10 +2,11 @@
 
 # Set the defaults. These can be overridden by specifying the value as an
 # environment variable when running this script.
-INCLUDE_OPENSSH=" ${INCLUDE_OPENSSH:-true}"
+INCLUDE_OPENSSH="${INCLUDE_OPENSSH:-true}"
 INCLUDE_SAKURA="${INCLUDE_SAKURA:-true}"
 INCLUDE_PROTONFIX="${INCLUDE_PROTONFIX:-true}"
 INCLUDE_GPU_DRIVERS="${INCLUDE_GPU_DRIVERS:-true}"
+INCLUDE_FFMPEG="${INCLUDE_FFMPEG:-true}"
 GPU_TYPE="${GPU_TYPE:-auto}"
 NON_INTERACTIVE="${NON_INTERACTIVE:-false}"
 STEAM_USER="${1:-steam}"
@@ -32,6 +33,7 @@ if [[ "${NON_INTERACTIVE}" != "true" ]]; then
 	echo "  OpenSSH:      ${INCLUDE_OPENSSH}"
 	echo "  Terminal:     ${INCLUDE_SAKURA}"
 	echo "  Proton Fixes: ${INCLUDE_PROTONFIX}"
+	echo "  FFMPEG:       ${INCLUDE_FFMPEG}"
 	echo "  GPU Drivers:  ${INCLUDE_GPU_DRIVERS}"
 	echo "    GPU Type:   ${GPU_TYPE}"
 	echo "  Steam User:   ${STEAM_USER}"
@@ -142,6 +144,12 @@ fi
 if [[ "${INCLUDE_OPENSSH}" == "true" ]]; then
 	echo "Installing OpenSSH Server..."
 	swupd bundle-add openssh-server
+fi
+
+# Install ffmpeg for Netflix and youtube
+if [[ "${INCLUDE_FFMPEG}" == "true" ]]; then
+	echo "Installing FFMPEG..."
+	./ffmpeg_installer.sh
 fi
 
 # Enable automatic login. We use 'envsubst' to replace the user with ${STEAM_USER}.
