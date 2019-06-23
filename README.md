@@ -34,11 +34,11 @@ Here is the list of all the available installation options:
 | -------------------- | ------- | -------------------------------------------------------- |
 | `INCLUDE_OPENSSH`    | true    | Whether or not OpenSSH server should be installed        |
 | `INCLUDE_SAKURA`     | true    | Whether or not to install a terminal emulator            |
-| `INCLUDE_PROTONFIX`  | false   | Whether or not to install Protonfix                      |
+| `INCLUDE_FFMPEG      | true    | Whether or not to install ffmpeg                         |
+| `INCLUDE_PROTONFIX`  | true    | Whether or not to install Protonfix                      |
 | `INCLUDE_GPU_DRIVERS`| true    | Whether or not to install the latest GPU drivers         |
 | `GPU_TYPE`           | auto    | GPU drivers to install. Can be: auto, nvidia, amd, intel |
 | `NON_INTERACTIVE`    | false   | Whether or not to prompt the user during install         |
-| `STEAM_USER`         | steam   | The username of the account to autologin as              |
 
 ## FAQ
 
