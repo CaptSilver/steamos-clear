@@ -4,7 +4,7 @@
 # environment variable when running this script.
 INCLUDE_OPENSSH=" ${INCLUDE_OPENSSH:-true}"
 INCLUDE_SAKURA="${INCLUDE_SAKURA:-true}"
-INCLUDE_PROTONFIX="${INCLUDE_PROTONFIX:-false}"
+INCLUDE_PROTONFIX="${INCLUDE_PROTONFIX:-true}"
 INCLUDE_GPU_DRIVERS="${INCLUDE_GPU_DRIVERS:-true}"
 GPU_TYPE="${GPU_TYPE:-auto}"
 NON_INTERACTIVE="${NON_INTERACTIVE:-false}"
@@ -134,7 +134,7 @@ fi
 
 # Install a terminal emulator that can be added from Big Picture Mode.
 if [[ "${INCLUDE_SAKURA}" == "true" ]]; then
-	echo "Sakura is unable to be installed at this time."
+	echo "Sakura is being installed at this time."
 	./sakura_installer.sh
 fi
 
@@ -164,7 +164,7 @@ chmod +x /usr/local/bin/steamos-fg
 echo "Creating sudoers rules to allow rebooting between sessions..."
 mkdir -p /etc/sudoers.d
 cp ./conf/reboot-sudoers.conf /etc/sudoers.d/steamos.conf
-chmod 440 /etc/sudoers.d/steamos-reboot
+chmod 440 /etc/sudoers.d/steamos.conf
 
 # Install the steamos compositor, modeswitch, and themes
 echo "Installing Compositor and Modeswitch"
