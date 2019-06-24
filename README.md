@@ -7,6 +7,7 @@ It will do the following:
 * Create the `steam` user account if it does not exist.
 * Install steam, if it is not installed.
 * Install the Steam Compositor and Steam Mode Switch.
+* Install the latest Nvidia drivers (must restart and rerun nvidia_installer.sh)
 * Configure autologin for the `steam` user account.
 * Create `reboot-to-[steamos,desktop]-mode` scripts to switch between sessions.
 * Create `steamos-fg` script for games that won't run in the foreground on the SteamOS Compositor.

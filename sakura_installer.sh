@@ -11,7 +11,7 @@ tar xvf "/tmp/sakura-3.6.0.tar.bz2" -C "/tmp"
 
 echo "Compiling and Installing Sakura!"
 pushd "/tmp/sakura-3.6.0"
-./cmake ./
+cmake ./
 make
 make install
 popd

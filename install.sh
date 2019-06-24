@@ -212,6 +212,9 @@ chmod +x /usr/bin/steamos-update
 touch /etc/lsb-release
 
 echo ""
-echo "Installation complete! Press ENTER to reboot or CTRL+C to exit"
+echo "Installation complete! Press ENTER to exit and start Steam!"
+echo "Steam needs to be started before we restart into SteamOS"
+echo "After Steam installs client files, please restart and login into SteamOS."
+echo "If installing Nvidia drivers, you will need to rerun the nvidia_installer.sh script as sudo on restart!"
 read -r
-sudo reboot
+exit && /usr/bin/steam
