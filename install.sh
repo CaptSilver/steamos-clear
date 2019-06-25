@@ -170,9 +170,8 @@ chmod +x /usr/local/bin/steamos-fg
 
 # Create a sudoers rule to allow passwordless reboots between sessions.
 echo "Creating sudoers rules to allow rebooting between sessions..."
-mkdir -p /etc/sudoers.d
-cp ./conf/reboot-sudoers.conf /etc/sudoers.d/steamos.conf
-chmod 440 /etc/sudoers.d/steamos.conf
+cp ./conf/reboot-sudoers.conf /etc/sudoers
+chmod 440 /etc/sudoers
 
 # Install the steamos compositor, modeswitch, and themes
 echo "Installing Compositor and Modeswitch"
