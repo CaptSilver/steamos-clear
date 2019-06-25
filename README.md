@@ -17,7 +17,7 @@ Installation is very simple. Follow these steps to install SteamOS-Clear:
  
 `git clone https://github.com/captsilver/steamos-clear.git`   
 `cd steamos-clear`    
-`sudo ./install.sh "insert steam user name here"`
+`sudo ./install.sh "insert steam user name here"`      
 `/usr/bin/steam`
 
 After you run steam and it installs the client package, you should restart.
