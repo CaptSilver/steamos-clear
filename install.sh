@@ -24,7 +24,7 @@ STEAMOS_ALIENWAREWMI_VER="${STEAMOS_ALIENWAREWMI_VER:-2.58}"
 # Ensure the script is being run as root
 if [ "$EUID" -ne 0 ]; then
 	echo "This script must be run with sudo."
-	exit
+	exec sudo $0 "$@"
 fi
 
 # Confirm from the user that it's OK to continue
@@ -51,6 +51,7 @@ fi
 
 #Need to install Pre-Requirements for compilation and downloading.
 echo "Installing Requirements for installation"
+echo "WARNING: Installing desktop-dev! This will take awhile to install!"
 swupd bundle-add wget devpkg-libX11 devpkg-SDL_image devpkg-systemd python3-basic desktop-dev
 
 # Download the packages we need. If we fail at downloading, stop the script.
@@ -96,8 +97,17 @@ if [[ "${INCLUDE_GPU_DRIVERS}" == "true" ]]; then
 	# Install the GPU drivers.
 	case "${GPU_TYPE}" in
 		nvidia)
-			echo "Installing the latest Nvidia drivers..."
-			./nvidia_installer.sh
+			echo "Starting Nvidia Installer..."
+			echo "If you have nouveau drivers running this will not work!"
+    		echo "Please remove the nouveau module before running nvidia_installer.sh!"
+			read -p "Do you want to continue? [Yy] " -n 1 -r
+    		echo
+    		if [[ $REPLY =~ ^[Yy]$ ]]; then
+        		echo "Starting installation..."
+    			./nvidia_installer.sh
+			else
+        		echo "Aborting Nvidia installation."
+        	fi
 			;;
 		amd)
 			echo "The latest AMD drivers are installed!"
@@ -113,15 +123,6 @@ if [[ "${INCLUDE_GPU_DRIVERS}" == "true" ]]; then
 			;;
 	esac
 fi
-
-# Install steam and steam device support.
-echo "Installing steam..."
-tar xvf ${STEAMOS_BUILD_DIR}/steam_${STEAMOS_STEAM_VER}.tar.gz --strip-components=0 -C ${STEAMOS_BUILD_DIR}
-pushd ${STEAMOS_BUILD_DIR}/steam/
-make install
-popd
-rm ${STEAMOS_BUILD_DIR}/steam_${STEAMOS_STEAM_VER}.tar.gz
-rm -rf ${STEAMOS_BUILD_DIR}/steam
 
 # Enable Protonfix for ease of use w_${STEAMOS_STEAM_VER}ith certain games that needs tweaking.
 # https://github.com/simons-public/protonfixes
@@ -174,6 +175,17 @@ cp ./conf/reboot-sudoers.conf /etc/sudoers
 chmod 440 /etc/sudoers
 
 # Install the steamos compositor, modeswitch, and themes
+# Insert bash functions here:
+
+# Install steam and steam device support.
+echo "Installing steam..."
+tar xvf ${STEAMOS_BUILD_DIR}/steam_${STEAMOS_STEAM_VER}.tar.gz --strip-components=0 -C ${STEAMOS_BUILD_DIR}
+pushd ${STEAMOS_BUILD_DIR}/steam/
+make install
+popd
+rm ${STEAMOS_BUILD_DIR}/steam_${STEAMOS_STEAM_VER}.tar.gz
+rm -rf ${STEAMOS_BUILD_DIR}/steam
+
 echo "Installing Compositor and Modeswitch"
 tar xvf ${STEAMOS_BUILD_DIR}/steamos-compositor_${STEAMOS_COMPOSITOR_VER}.tar.xz --strip-components=0 -C ${STEAMOS_BUILD_DIR}
 pushd ${STEAMOS_BUILD_DIR}/steamos-compositor-${STEAMOS_COMPOSITOR_VER}
@@ -209,6 +221,7 @@ cp ./conf/steamos.desktop "/usr/local/share/xsessions/steamos.desktop"
 cp ./conf/steamos-update "/usr/bin/steamos-update"
 chmod +x /usr/bin/steamos-update
 touch /etc/lsb-release
+chmod 666 /etc/lsb-release
 
 echo ""
 echo "Installation complete! Press ENTER to exit and start Steam!"

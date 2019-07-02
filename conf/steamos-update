@@ -1,6 +1,7 @@
 #! /bin/sh
+
 echo $$ > /tmp/steamos-update.pid
-/usr/bin/swupd update
+sudo /usr/bin/swupd update
 version=`printf '%b\n' "$(cat /etc/os-release | grep VERSION_ID)"| sed 's/[^0-9]*//g'`
 destdir=/etc/lsb-release
 if [ -f "$destdir" ]
